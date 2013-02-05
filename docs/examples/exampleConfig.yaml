@@ -1,0 +1,11 @@
+torrents:
+    rootPath: "/home/user/xpto"
+    someTorrentId:
+        url: "http://www.ezrss.it/search/index.php?simple&show_name=Heroes&mode=rss"
+        path: "torrents/someTorrentSO1"
+        frequency: 2h
+
+    someOtherTorrentId:
+        url: "http://www.ezrss.it/search/index.php?simple&show_name=Heroes&mode=rss"
+        path: "../someTorrentSO2"
+
