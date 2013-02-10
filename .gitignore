@@ -13,6 +13,7 @@ test/version_tmp
 tmp
 *.swp
 .DS_Store
+Session.vim
 
 # YARD artifacts
 .yardoc
