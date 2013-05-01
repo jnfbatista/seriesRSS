@@ -4,12 +4,12 @@ require 'nokogiri'
 class TorrentItem
   attr_accessor :id, :frequency, :url, :path, :last_checked
 
-  def initialize(id, url, path, frequency=0.5, last_checked=nil)
+  def initialize(id, url, path, frequency=nil, last_checked=nil)
     @id = id
     @url = url
     @path = path
-    @frequency = (frequency.nil?) ? 0.5 : frequency
-    @last_checked = nil
+    @frequency = frequency
+    @last_checked = last_checked
   end
 
   def get_next_episode
