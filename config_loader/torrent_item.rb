@@ -26,8 +26,12 @@ class TorrentItem
 
     xml.slop!()
     xml.rss.channel.item.each do |it|
-      puts it.link.text
+      yield it.link.text
     end
+  end
+
+  def update_last_checked
+
   end
 
   def to_s
