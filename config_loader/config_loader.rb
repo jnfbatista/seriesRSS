@@ -1,5 +1,6 @@
 require 'yaml'
 require 'pathname'
+require 'chronic'
 require_relative 'torrent_item'
 
 class ConfigLoader
@@ -27,25 +28,52 @@ class ConfigLoader
 
         ## get hold of the interesting part
         torrents = @full_config['torrents']
+        if torrents.nil? or torrents.empty?
+            raise 'Oops, your "torrents" section seems to be empty or malformed!'
+        end
 
-        @root_path = torrents['rootPath'].to_s.empty? ? "/tmp/" : torrents['rootPath']
+        globalFrequency = 0.0
+        torrents.each do |torrentConfigKey, torrentConfigValue|
 
-        @torrent_list ||= Array.new
-        @full_config['torrents'].each_pair do |k,v|
-            if k == 'rootPath'
-                @rootPath = v.to_s.empty? ? "/tmp/" : v
+            if torrentConfigKey == "rootPath"
+                @root_path = torrentConfigValue.to_s.empty? ? "/tmp/" : torrentConfigValue.strip
+                puts "Found root path: #{@root_path}"
                 next
             end
 
-            if v.is_a?(Hash)
-                @torrent_list << TorrentItem.new(k, v['url'], v['path'], v['frequency'])
-            else
-                puts v
-               raise 'Malformed yaml!'
+            if torrentConfigKey == "frequency"
+                globalFrequency = ConfigLoader.seconds_in(torrentConfigValue) || 1600
+                puts "Found global frequency: #{globalFrequency}"
+                next
             end
+
+            if torrentConfigValue.is_a? Hash # It's the section relative to the torrent
+
+                @torrent_list ||= Array.new
+                torrentId = torrentConfigKey
+                torrentUrl = torrentConfigValue['url']
+                torrentPath = torrentConfigValue['path'] || @root_path
+                torrentFreq = ConfigLoader.seconds_in(torrentConfigValue['frequency']) || globalFrequency
+
+                @torrent_list << TorrentItem.new(torrentId, torrentUrl, torrentPath == nil ? nil : torrentPath, torrentFreq == nil ? nil : torrentFreq)
+                next
+            end
+
+
         end
+
     end
 
+
+
+    def self.seconds_in(time)
+        if time.nil?
+            return nil
+        end
+
+        now = Time.now
+        Chronic.parse("#{time} from now", :now => now) - now
+    end
 
     def to_s
         ret = "";
@@ -60,4 +88,5 @@ class ConfigLoader
         return ret
 
     end
+
 end

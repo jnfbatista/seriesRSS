@@ -1,11 +1,13 @@
 torrents:
-    rootPath: "/home/user/xpto/"
+    rootPath: "/home/user/xpto"
+    frequency: 24 hours
+
     someTorrentId:
         url: "http://www.ezrss.it/search/index.php?simple&show_name=Heroes&mode=rss"
-        path: "torrents/someTorrentSO1"
-        frequency: 2h
+        path: "/torrents/someTorrentSO1"
+        frequency: 3 hours
 
     someOtherTorrentId:
         url: "http://www.ezrss.it/search/index.php?simple&show_name=Heroes&mode=rss"
-        path: "../someTorrentSO2"
+
 
