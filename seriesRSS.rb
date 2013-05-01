@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
 require 'open-uri'
-
 require_relative 'config_loader/config_loader'
+
+SLEEP_TIME = 1
 
 # main function:
 # - gets the config (which is included in a 'require')
@@ -36,7 +37,7 @@ def main
 
       end
 
-      sleep(5)
+      sleep(SLEEP_TIME)
 
     end
 
