@@ -1,13 +1,15 @@
 require 'yaml'
 require 'pathname'
 require 'chronic'
+require 'pathname'
 require_relative 'torrent_item'
 
 class ConfigLoader
-    attr_accessor :file_path, :full_config, :torrent_list, :root_path, :min_check_time
+    attr_accessor :file_path, :full_config, :torrent_list, :root_path, :min_check_time, :current_wd
 
     def initialize(file_path)
-        @file_path = File.join(Dir.getwd, file_path)
+        @current_wd = Dir.getwd
+        @file_path = File.join(@current_wd, file_path)
 
         # make sure the file exists
         pn = Pathname.new(@file_path)        
@@ -37,7 +39,7 @@ class ConfigLoader
         torrents.each do |torrentConfigKey, torrentConfigValue|
 
             if torrentConfigKey == "rootPath"
-                @root_path = torrentConfigValue.to_s.empty? ? "/tmp/" : torrentConfigValue.strip
+                @root_path = File.absolute_path(torrentConfigValue.to_s.strip || @current_wd) 
                 next
             end
 
@@ -51,7 +53,8 @@ class ConfigLoader
                 @torrent_list ||= Array.new
                 torrentId = torrentConfigKey
                 torrentUrl = torrentConfigValue['url']
-                torrentPath = torrentConfigValue['path'] || @root_path
+                torrentPath = get_target_path_for_torrent(torrentConfigValue['path'])
+
                 torrentFreq = ConfigLoader.seconds_in(torrentConfigValue['frequency']) || globalFrequency
 
                 @torrent_list << TorrentItem.new(torrentId, torrentUrl, torrentPath, torrentFreq)
@@ -64,6 +67,18 @@ class ConfigLoader
 
     end
 
+    #
+    #
+    def get_target_path_for_torrent(override_path = nil)
+        return @root_path if override_path.nil? or override_path.empty?
+
+        if (Pathname.new override_path).absolute?
+            return override_path
+        else
+            return File.join(@root_path, override_path)
+        end
+
+    end
 
 
     def self.seconds_in(time)
