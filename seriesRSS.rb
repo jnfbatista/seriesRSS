@@ -3,8 +3,6 @@
 require 'open-uri'
 require_relative 'config_loader/config_loader'
 
-SLEEP_TIME = 1
-
 # main function:
 # - gets the config (which is included in a 'require')
 # - dowloads the torrent 
@@ -15,7 +13,8 @@ def main
 
   # loads the file to the configuration object
   config_loader = ConfigLoader.new ARGV[0] 
-
+  sleep_time = config_loader.min_check_time
+  puts "Our loop will sleep for #{sleep_time} seconds at each iteration (minimum check time found for the all torrents)"
   # Gets the home path
   # @TODO should the paths be relative to the home path? 
   home_path = File.expand_path('~')
@@ -37,7 +36,7 @@ def main
 
       end
 
-      sleep(SLEEP_TIME)
+      sleep(sleep_time)
 
     end
 

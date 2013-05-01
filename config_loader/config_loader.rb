@@ -4,7 +4,7 @@ require 'chronic'
 require_relative 'torrent_item'
 
 class ConfigLoader
-    attr_accessor :file_path, :full_config, :torrent_list, :root_path
+    attr_accessor :file_path, :full_config, :torrent_list, :root_path, :min_check_time
 
     def initialize(file_path)
         @file_path = File.join(Dir.getwd, file_path)
@@ -16,6 +16,7 @@ class ConfigLoader
         end
 
         # load the yaml
+        @min_check_time = 9999999
         load_config()
     end
 
@@ -37,13 +38,11 @@ class ConfigLoader
 
             if torrentConfigKey == "rootPath"
                 @root_path = torrentConfigValue.to_s.empty? ? "/tmp/" : torrentConfigValue.strip
-                puts "Found root path: #{@root_path}"
                 next
             end
 
             if torrentConfigKey == "frequency"
                 globalFrequency = ConfigLoader.seconds_in(torrentConfigValue) || 1600
-                puts "Found global frequency: #{globalFrequency}"
                 next
             end
 
@@ -55,7 +54,8 @@ class ConfigLoader
                 torrentPath = torrentConfigValue['path'] || @root_path
                 torrentFreq = ConfigLoader.seconds_in(torrentConfigValue['frequency']) || globalFrequency
 
-                @torrent_list << TorrentItem.new(torrentId, torrentUrl, torrentPath == nil ? nil : torrentPath, torrentFreq == nil ? nil : torrentFreq)
+                @torrent_list << TorrentItem.new(torrentId, torrentUrl, torrentPath, torrentFreq)
+                @min_check_time = torrentFreq if torrentFreq < @min_check_time
                 next
             end
 
