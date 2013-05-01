@@ -10,29 +10,36 @@ require_relative 'config_loader/config_loader'
 def main
 
   # Dummy data
-  url = "http://torrents.thepiratebay.se/8125081/Star_Wars_The_Clone_Wars_S05E17_Sabotage_HDTV_x264-FQM.8125081.TPB.torrent"
-  folder = "/home/batista/"
   frequency = 60
 
+  # loads the file to the configuration object
   config_loader = ConfigLoader.new ARGV[0] 
+
+  # Gets the home path
+  # @TODO should the paths be relative to the home path? 
+  home_path = File.expand_path('~')
 
   loop do 
     # for each series get the torrents
     config_loader.torrent_list.each do |serie|
-      puts "Downloading #{serie.id}"
-      serie.get_torrent_url
+      puts "\nDownloading #{serie.id} (last checked on #{serie.last_checked}) "
+      serie.get_next_episode do |episode| 
+
+        # gets the filename
+        filename = episode.split('/').last
+        puts filename
+
+        # Iterate the object list and dowload file
+        #open(folder+filename, 'wb') do |file|
+        #  file << open(url).read
+        #end
+
+      end
+
+      sleep(5)
+
     end
 
-    # gets the filename
-    filename = url.split('/').last
-
-    # Iterate the object list and dowload file
-    open(folder+filename, 'wb') do |file|
-      file << open(url).read
-    end
-
-    sleep(5)
-    # loads the file to the configuration object
 
   end
 end
