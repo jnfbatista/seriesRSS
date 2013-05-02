@@ -1,13 +1,17 @@
 torrents:
     rootPath: "/tmp/torrents"
-    frequency: 24 hours
+    frequency: 5 seconds
 
-    someTorrentId:
-        url: "http://www.ezrss.it/search/index.php?simple&show_name=Heroes&mode=rss"
-        path: "torrents/someTorrentSO1"
+    number_one:
+        url: "http://www.ezrss.it/search/index.php?simple&show_name=Game+of+Thrones&mode=rss"
+        path: "number_one_dir"
         frequency: 3 hours
 
-    someOtherTorrentId:
-        url: "http://www.ezrss.it/search/index.php?simple&show_name=Heroes&mode=rss"
+    number_two:
+        url: "http://www.ezrss.it/search/index.php?show_name=Walking+Dead&date=&quality=&release_group=&mode=rss"
+        path: "number_two_dir"
+
+    number_three:
+        url: "http://www.ezrss.it/search/index.php?show_name=simpsons&date=&quality=&release_group=&mode=rss"
 
 
